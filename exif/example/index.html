@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+<head>
+<script type="text/javascript" src="../exif.js"></script>
+
+</head>
+<body>
+
+<br/>
+<img src="Bush-dog.jpg" id="img2" />
+<br/>
+
+
+
+<script>
+
+document.getElementById("img2").onclick = function() {
+    EXIF.getData(this, function() {
+        alert(EXIF.pretty(this));
+    });
+}
+
+</script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,40 @@
+
+
+
+
+@font-face {
+  font-family: "Kimberley";
+  src: url(LANENAR_.ttf) format("truetype");
+}
+
+
+body {
+background-color:black;
+   font-family: "Kimberley", sans-serif;
+   font-weight: 30;
+   color: white;
+}
+
+h1 {
+	font-size: 150;
+	text-align: center;
+}
+
+h3 {
+	font-size: 7;
+	text-align: center;
+}
+
+.center
+{
+margin:auto;
+width:100%;
+font-size: 11;
+text-align: left;
+}
+
+.center2
+{
+margin:auto;
+width:70%;
+}
