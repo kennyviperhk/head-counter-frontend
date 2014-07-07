@@ -2,32 +2,38 @@
 <html lang="en">
 <head>
 
-  <meta charset="UTF-8">
-  <title>Hong Kong Protest Head Counter</title>
-  <link rel="stylesheet" href="css/headcounter.css" />
-  <script type="text/javascript" src="./scripts/jquery-1.11.1.min.js"></script>
-
-  
-  <script type="text/javascript">
+<meta charset="UTF-8">
+<title>Hong Kong Protest Head Counter</title>
+<link rel="stylesheet" href="css/headcounter.css" />
+<script type="text/javascript" src="./scripts/jquery-1.11.1.min.js"></script>
 
 
+<script type="text/javascript">
 
+//allow number only
 
+function isNumberKey(evt){
 
+    var charCode = (evt.which) ? evt.which : event.keyCode
+    if (charCode > 31 && (charCode < 48 || charCode > 57))
+        return false;
+    return true;
+}
 
+   
 
-  $(window).scroll(function() {
-   if($(window).scrollTop() + $(window).height() == $(document).height()) {
-    $("#next").click().html('<h3> ... loading more gestures ... </h3>'); 
-  }
+$(window).scroll(function() {
+ if($(window).scrollTop() + $(window).height() == $(document).height()) {
+  $("#next").click().html('<h3> ... loading more gestures ... </h3>'); 
+}
 });
-  </script>
-  <script src="./scripts/processing.min.js"></script>
-  <script type="text/processing" data-processing-target="mycanvas">
+</script>
+<script src="./scripts/processing.min.js"></script>
+<script type="text/processing" data-processing-target="mycanvas">
 
-  $(document).ready(function() {
+$(document).ready(function() {
 
-  });
+});
 
 
 
@@ -61,7 +67,7 @@ int[] currentLoadedImagesID = new int[numOfImageToLoad];
 var peopleLines =[];
 
 //-----Image Scaler-----
-float imageScale =1.2;
+float imageScale =1;
 HScrollbar hs1;
 
 int targetImage = 0; //when timeline image is selected
@@ -91,6 +97,10 @@ boolean prevImage = false;
 //-----KeyStone
 
 Keystone[] keystones = new Keystone[numOfImageToLoad];
+
+
+//-----CountHead----
+bool isTxtfieldshown = false;
 
 void setup()
 {
@@ -142,44 +152,44 @@ void draw() {
     imageDisplayY += dy * 0.6;
   }   
 
-int newMouseX,newMouseY;
-int yOffset;
+  int newMouseX,newMouseY;
+  int yOffset;
   if(nextImage){
          // imageDisplayY +=images[0].height;
          if(imageScale < 1){
           imageYPos+=images[0].height*imageScale;
-         }else{
+        }else{
           imageYPos+=images[0].height;
-         }
-         nextImage = false;
-       }
-       if(prevImage){
+        }
+        nextImage = false;
+      }
+      if(prevImage){
 
-         if(imageScale < 1){
-          imageYPos-=images[0].height*imageScale;
-         }else{
+       if(imageScale < 1){
+        imageYPos-=images[0].height*imageScale;
+      }else{
         imageYPos-=images[0].height;
-         }
-        prevImage = false;
       }
+      prevImage = false;
+    }
 
-      translate(0,imageDisplayY);
+    translate(0,imageDisplayY);
 //int translateMap;
-      if(imageScale<1){
+if(imageScale<1){
 
-        translate(map(imageScale,0,1,width/2,0),map(imageScale,0,1,height/2,0));
-        scale(imageScale);
+  translate(map(imageScale,0,1,width/2,0),map(imageScale,0,1,height/2,0));
+  scale(imageScale);
 
-      }
+}
 
 
-      for (int i=numOfImageToLoad-1; i>= 0; i--) {
+for (int i=numOfImageToLoad-1; i>= 0; i--) {
 
-        pushMatrix();
-        imgXPos[i] = width/2;
+  pushMatrix();
+  imgXPos[i] = width/2;
 
-        imgYPos[i] = images[i].height*i;
-        int midPt = images[i].height*(numOfImageToLoad/2-1);
+  imgYPos[i] = images[i].height*i;
+  int midPt = images[i].height*(numOfImageToLoad/2-1);
     //int yOffset =round( map(imageScale,minScale,maxScale,midPt+images[i].height/2,midPt)) ;
 
     yOffset = midPt+images[i].height/2;
@@ -190,8 +200,8 @@ int yOffset;
     translate(imgXPos[i],imgYPos[i]);
 
     if(imageScale>1){
-    scale(imageScale);
-  }
+      scale(imageScale);
+    }
 
     if (images[i].width == 0) {
       // Image is not yet loaded
@@ -221,7 +231,7 @@ int yOffset;
       //if(i==0){
 
 
-        
+
 
         int zoomSize =60;
         int zoomScale =2; 
@@ -245,11 +255,11 @@ int yOffset;
     for(int i=0;i<keystones.length;i++){
       if(keystones[i].pressed() && mouseJustPressedDown){
 
-          peopleLines[0].create(newMouseX,newMouseY-yOffset);
-          println("YES " + currentLoadedImagesID[i]+ "newMouseX"+ newMouseX + "newMouseY"+ (newMouseY-yOffset));
-          mouseJustPressedDown = false;
-        }
+        peopleLines[0].create(newMouseX,newMouseY-yOffset);
+        println("YES " + currentLoadedImagesID[i]+ "newMouseX"+ newMouseX + "newMouseY"+ (newMouseY-yOffset));
+        mouseJustPressedDown = false;
       }
+    }
     for(int j=0;j<peopleLines.length;j++){
       peopleLines[j].show();
     }
@@ -329,6 +339,29 @@ void toolBar(){
   for(int i =0; i< imgToolBarBtn.length;i++){
     imgToolBarBtn[i].show();
   }
+  //-----Text Field -------
+//
+var canvas = document.getElementById('mycanvas');
+var canvasWidth = canvas.scrollWidth;
+var canvasHeight = canvas.scrollHeight;
+
+  $(".countHeadTxtField").css("left",$( document ).width()/4 +toolBarX).css("top", height/2);
+  $(".countHeadBtn").css("left",$( document ).width()/4+ toolBarX + 90).css("top",height/2);
+ // $(".countHeadTxtField").css("left",toolBarX);
+ // $(".countHeadBtn").css("left",toolBarX+90);
+  if(isTxtfieldshown){
+       $(".countHeadTxtField").fadeIn();
+           $(".countHeadTxtField:focus").attr("value","");
+ 
+     }else{
+
+      $(".countHeadTxtField").fadeOut();
+             $(".countHeadTxtField").focusout(function() {
+                      $(this).attr("value","人數");
+            })
+
+  }
+
 
 }
 
@@ -395,8 +428,13 @@ void mouseReleased() {
   for(int i =0; i<toolBarBtns.length;i++){
    if(toolBarBtns[i].pressed() == toolBarBtnsTxt[0]){
      println("Count People");
+     isTxtfieldshown = false;
+
+
    }else if(toolBarBtns[i].pressed() ==  toolBarBtnsTxt[1]){
-    println("Count Head");
+      println("Count Head");
+      isTxtfieldshown =true;
+      
   }
 }
 for(int i =0; i<imgToolBarBtn.length;i++){
@@ -417,7 +455,7 @@ for(int i =0; i<imgToolBarBtn.length;i++){
       println("YES " + currentLoadedImagesID[i]);
     }
   }*/
-  controlTextField();
+
 
 }
 
@@ -463,10 +501,6 @@ void setGradient(int x, int y, float w, float h, color c1, color c2, int axis ) 
 */
 
 
-void controlTextField(){
- $(".classy").hide();
-
-}
 
 // +++++++++++++++++ Classes +++++++++++++++++
 
@@ -936,7 +970,7 @@ var ProcessingInit = function() {
 // ============================ End Processing =================================
 </script>
 <style type="text/css">
-.classy{
+.countHeadTxtField{
   border: 1px solid white; 
   padding: 0px;
   background: rgba(255,255,255,0.5);
@@ -946,8 +980,7 @@ var ProcessingInit = function() {
   width:80px;
   height:30px;
 }
-.classname {
-
+.countHeadBtn {
 
 
   text-indent:0;
@@ -961,23 +994,25 @@ var ProcessingInit = function() {
 
   text-decoration:none;
   text-align:center;
-  }.classname:active {
-    position:relative;
-    top:1px;
-    }</style>
+}.countHeadBtn:active {
+  position:relative;
+  top:1px;
+}</style>
 
 
-  </head>
-  <body>
-    <div class="center" style="text-align:center" >
-      <canvas id="mycanvas" style="border: 1px solid #000000;"></canvas>
-    </div>
+</head>
+<body>
+<div class="center" style="text-align:center" >
+<canvas id="mycanvas" style="border: 1px solid #000000;"></canvas>
+</div>
 
 
-    <input type="text" class="classy" style="    left: 10px; top: 10px; "/>
-    <a href="#" class="classname classy"  style="    left: 90px; top: 10px; " >OK</a>
+<input type="text" class="countHeadTxtField" style="left: 10px; top: 10px; " onkeypress="return isNumberKey(event)" value="人數"/>
+<a href="#" class="countHeadTxtField countHeadBtn"  style="    left: 90px; top: 10px; " >OK</a>
 
 
 
-  </body>
-  </html>
+
+
+</body>
+</html>
