@@ -58,7 +58,15 @@ int numOfTotalImages = 276;
 int numOfImageToLoad = 4; //must be even number
 int numOfDisplayingImage = 4;
 PImage[] images = new PImage[numOfImageToLoad];
+
+
+
+ImageDisplay[] imagesToDisaply = new ImageDisplay[numOfImageToLoad];
 String[] imgURL = new String[numOfImageToLoad];
+int[] imagesToDisplayX= new String[numOfImageToLoad];
+int[] imagesToDisplayY = new String[numOfImageToLoad];
+
+
 String[] imgXPos = new String[numOfImageToLoad];
 String[] imgYPos = new String[numOfImageToLoad];
 int[] currentLoadedImagesID = new int[numOfImageToLoad];
@@ -114,6 +122,11 @@ void setup()
     images[i] = requestImage(imgURL[i]);
   }
 
+  for (int i=0;i<numOfImageToLoad;i++){
+    imagesToDisaply[i] = new ImageDisplay(width/2,height/numOfImageToLoad*i,imgURL[i]);
+
+  }
+
   size(canvasW, canvasH); 
   ProcessingInit(); //resize according to browser
   loadAJAXImg();
@@ -152,6 +165,9 @@ void draw() {
     imageDisplayY += dy * 0.6;
   }   
 
+
+ 
+
   int newMouseX,newMouseY;
   int yOffset;
   if(nextImage){
@@ -182,7 +198,7 @@ if(imageScale<1){
 
 }
 
-
+/*
 for (int i=numOfImageToLoad-1; i>= 0; i--) {
 
   pushMatrix();
@@ -257,6 +273,7 @@ for (int i=numOfImageToLoad-1; i>= 0; i--) {
       popMatrix();
 
     }
+    */
     for(int i=0;i<keystones.length;i++){
       if(keystones[i].pressed() && mouseJustPressedDown){
 
@@ -268,9 +285,27 @@ for (int i=numOfImageToLoad-1; i>= 0; i--) {
     for(int j=0;j<peopleLines.length;j++){
       peopleLines[j].show();
     }
+for (int i=0;i<numOfImageToLoad;i++){
 
+  imagesToDisplayX[i] = width/2;
+
+  if(i<numOfImageToLoad/2-1){
+  imagesToDisplayY[i] = height/2- imagesToDisaply[i].height()*abs(numOfImageToLoad/2-1 - i) ;
+}else if (i>numOfImageToLoad/2-1){
+  imagesToDisplayY[i] = height/2+ imagesToDisaply[i].height()*abs(numOfImageToLoad/2-1 - i) ;
+}else{
+  imagesToDisplayY[i] = height/2;
+}
+println("imagesToDisplayY["+i+"]" + imagesToDisplayY[i]);
+    imagesToDisaply[i].show(imagesToDisplayX[i],imagesToDisplayY[i]);
+
+  }
 
     popMatrix();
+
+
+
+
 
   //------image scaler-------
   hs1.update();
@@ -470,6 +505,7 @@ void updateImage(int targetImageID){
    println("targetImage " + targetImageID);
    int j =0;
    for (int i=targetImageID - (numOfImageToLoad/2); i< targetImageID+ numOfImageToLoad/2; i++) {
+    imagesToDisaply[j].changeImage(imgURL[i]);
     images[j] = requestImage(imgURL[i]);
     currentLoadedImagesID[j] = i;
     j++;
@@ -508,6 +544,103 @@ void setGradient(int x, int y, float w, float h, color c1, color c2, int axis ) 
 
 
 // +++++++++++++++++ Classes +++++++++++++++++
+
+class ImageDisplay
+{
+  float cX;
+  float cY;
+  float cWidth =10;
+  float cHeight =10 ;
+  int cImageURL;
+  PImage cImage;
+  boolean firstLoad = true;
+
+  ImageDisplay(float x, float y, String imageURL)
+  {
+    cX = x;
+    cY = y;
+    cImageURL = imageURL;
+    cImage = requestImage(cImageURL);
+
+
+  }
+  void changeImage(String imageURL){
+    cImageURL = imageURL;
+    cImage = requestImage(cImageURL);
+  }
+  void show()
+  {
+ 
+
+    if (cImage.width == 0) {
+      // Image is not yet loaded
+    } else if (cImage.width == -1) {
+      // This means an error occurred during image loading
+    } else {
+      imageMode(CENTER);
+
+      pushMatrix();
+      translate(cX,  cY);
+      image(cImage,0,0,cWidth, cHeight);
+      cWidth = cImage.width;
+      cHeight = cImage.height;
+      popMatrix();
+    }
+  }
+  void show(int x,int y)
+  {
+  
+
+  float targetX = x;
+  float dx = targetX - cX;
+  if(abs(dx) > 1) {
+    cX += dx * 0.2;
+  }   
+
+ float targetY = y;
+  float dy = targetY - cY;
+  if(abs(dy) > 1) {
+    cY += dy * 0.2;
+  }   
+
+
+    if (cImage.width == 0) {
+      // Image is not yet loaded
+    } else if (cImage.width == -1) {
+      // This means an error occurred during image loading
+    } else {
+      imageMode(CENTER);
+
+      pushMatrix();
+      translate(cX,  cY);
+      image(cImage,0,0,cWidth, cHeight);
+      cWidth = cImage.width;
+      cHeight = cImage.height;
+      popMatrix();
+    }
+  }
+  void moveTo(int x, int y){
+
+    cX = x;
+    cY = y;
+
+  }
+  void moveAdd(int x, int y){
+
+       cX += x;
+    cY += y;
+
+  }
+  int width(){
+    return cWidth;
+  }
+   int height(){
+    return cHeight;
+  }
+
+}
+
+
 
 class ToolBarButton
 {
