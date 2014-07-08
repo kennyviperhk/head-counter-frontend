@@ -223,7 +223,11 @@ for (int i=numOfImageToLoad-1; i>= 0; i--) {
       
       //rect((mouseX-imgXPos[i])/imageScale,((mouseY-imgYPos[i])/imageScale),100,100);
       newMouseX = (mouseX-imgXPos[i])/imageScale;
+      if (imageScale<1){
+      newMouseY = (mouseY-imgYPos[i])/imageScale - imageYPos/imageScale + map(imageScale,0,1,height/2,0)*imageScale;
+      }else{
       newMouseY = (mouseY-imgYPos[i])/imageScale - imageYPos/imageScale;
+    }
       keystones[i].show(-sideW +leftTopMargin, images[i].height/4, sideW - rightTopMargin,images[i].height/4, sideW - rightBottomMargin,images[i].height/2 - rightBottomBottomMargin, - sideW + leftBottomMargin, images[i].height/2 - leftBottomBottomMargin);
       
       keystones[i].over(newMouseX,newMouseY);
@@ -237,7 +241,8 @@ for (int i=numOfImageToLoad-1; i>= 0; i--) {
         int zoomScale =2; 
         if ( newMouseX <  sideW && newMouseX > - sideW && newMouseY < sideH && newMouseY >  - sideH){
           fill(255,0,0,150);       
-          text("we have this image here" + i, width/2, height /2 + (i*20));
+          println("we have this image here" + i);
+
           gg = images[i].get(round(map(newMouseX,- sideW , sideW ,0,images[i].width))-zoomSize/2,round(map(newMouseY,- sideH , sideH,0,images[i].height))-zoomSize/2, zoomSize,zoomSize);
 
           gg.resize(zoomSize*zoomScale,zoomSize*zoomScale);
