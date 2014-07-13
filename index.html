@@ -77,6 +77,7 @@ var peopleHeads =[];
 
 //-----Image Scaler-----
 float imageScale =1;
+float offsetScale =1;
 HScrollbar hs1;
 
 int targetImage = 0; //when timeline image is selected
@@ -95,6 +96,9 @@ int toolBarX=0;
 
 ToolBarButton[] toolBarBtns = new ToolBarButton[2];
 String[] toolBarBtnsTxt = ["數人數","對人頭"];
+
+boolean sessionCountHead = true;
+boolean sessionMakeLines = false;
 
 int imageDisplayY = 0;
 int imageYPos = 0;
@@ -152,47 +156,47 @@ void setup()
   }
 
   //-------People Lines---------
-    peopleLines.push(new PeopleLine());
+  peopleLines.push(new PeopleLine());
     //-------People Heads---------
     peopleHeads.push(new PeopleHead());
-}
+  }
 
 
-void draw() {
+  void draw() {
 
-  background(255);
-  
-  PImage gg;
-  pushMatrix();
-  float targetY = imageYPos;
-  float dy = targetY - imageDisplayY;
-  if(abs(dy) > 1) {
-    imageDisplayY += dy * 0.6;
-  }   
+    background(255);
 
-  int newMouseX,newMouseY;
-  int yOffset;
-  if(nextImage){
-         // imageDisplayY +=images[0].height;
-         if(imageScale < 1){
-          imageYPos+=images[0].height*imageScale;
-        }else{
-          imageYPos+=images[0].height;
-        }
-        nextImage = false;
+    PImage gg;
+    pushMatrix();
+    float targetY = imageYPos;
+    float dy = targetY - imageDisplayY;
+    if(abs(dy) > 1) {
+      imageDisplayY += dy * 0.6;
+    }   
+
+    int newMouseX,newMouseY;
+    int yOffset;
+    if(nextImage){
+
+     if(imageScale < 1){
+      imageYPos+=images[0].height*imageScale;
+    }else{
+      imageYPos+=images[0].height;
+    }
+    nextImage = false;
   }
   if(prevImage){
 
-       if(imageScale < 1){
-        imageYPos-=images[0].height*imageScale;
-      }else{
-        imageYPos-=images[0].height;
-      }
-      prevImage = false;
+   if(imageScale < 1){
+    imageYPos-=images[0].height*imageScale;
+  }else{
+    imageYPos-=images[0].height;
   }
+  prevImage = false;
+}
 
 
-    translate(0,imageDisplayY);
+translate(0,imageDisplayY);
     //int translateMap;
     int newTranslateX;
     int newTranslateY;
@@ -201,117 +205,29 @@ void draw() {
       translate(map(imageScale,0,1,width/2,0),map(imageScale,0,1,height/2,0));
       scale(imageScale);
 
-    newTranslateY = map(imageScale,0,1,height/2,0);
-    newTranslateX = map(imageScale,0,1,width/2,0);
+      newTranslateY = map(imageScale,0,1,height/2,0);
+      newTranslateX = map(imageScale,0,1,width/2,0);
     }
-
-/*
-for (int i=numOfImageToLoad-1; i>= 0; i--) {
-
-  pushMatrix();
-  imgXPos[i] = width/2;
-
-  imgYPos[i] = images[i].height*i;
-  int midPt = images[i].height*(numOfImageToLoad/2-1);
-    //int yOffset =round( map(imageScale,minScale,maxScale,midPt+images[i].height/2,midPt)) ;
-
-    yOffset = midPt+images[i].height/2;
-
-    //imgYPos[i] -= images[i].height*(numOfImageToLoad/2-1) + images[i].height/4  + yOffset;
-    imgYPos[i] -= yOffset;
-    //imgYPos[i] -=  midPt +yOffset;
-    translate(imgXPos[i],imgYPos[i]);
-
-    if(imageScale>1){
-      scale(imageScale);
-    }
-
-    if (images[i].width == 0) {
-      // Image is not yet loaded
-    } else if (images[i].width == -1) {
-      // This means an error occurred during image loading
-    } else {
-      imageMode(CENTER);
-
-      image(images[i], 0,  0, images[i].width, images[i].height);
-      int sideW = images[i].width/2;
-      int sideH = images[i].height/2;
-      int leftTopMargin = 190;
-      int leftBottomMargin = 80;
-      int rightTopMargin = 180;
-      int rightBottomMargin = 90;
-      int leftBottomBottomMargin = 5;
-      int rightBottomBottomMargin = 5;
-      fill(255,0,0);
-      
-      //rect((mouseX-imgXPos[i])/imageScale,((mouseY-imgYPos[i])/imageScale),100,100);
-      newMouseX = (mouseX-imgXPos[i])/imageScale;
-      if (imageScale<1){
-      newMouseY = (mouseY-imgYPos[i])/imageScale - imageYPos/imageScale + map(imageScale,0,1,height/2,0)*imageScale;
-      }else{
-      newMouseY = (mouseY-imgYPos[i])/imageScale - imageYPos/imageScale;
-    }
-      keystones[i].show(-sideW +leftTopMargin, images[i].height/4, sideW - rightTopMargin,images[i].height/4, sideW - rightBottomMargin,images[i].height/2 - rightBottomBottomMargin, - sideW + leftBottomMargin, images[i].height/2 - leftBottomBottomMargin);
-      
-      keystones[i].over(newMouseX,newMouseY);
-
-      //if(i==0){
-
-
-
-
-        int zoomSize =60;
-        int zoomScale =2; 
-        if ( newMouseX <  sideW && newMouseX > - sideW && newMouseY < sideH && newMouseY >  - sideH){
-          fill(255,0,0,150);       
-          println("we have this image here" + i);
-
-          gg = images[i].get(round(map(newMouseX,- sideW , sideW ,0,images[i].width))-zoomSize/2,round(map(newMouseY,- sideH , sideH,0,images[i].height))-zoomSize/2, zoomSize,zoomSize);
-
-          gg.resize(zoomSize*zoomScale,zoomSize*zoomScale);
-          image(gg,newMouseX +zoomSize*zoomScale/2,newMouseY -zoomSize*zoomScale/2);
-
-        }
-      }
-      fill(255);
-      text("Displaying Image: " +currentLoadedImagesID[i] ,0,0);
-      text("Displaying Image: " +i ,0,-20);
-
-      popMatrix();
-
-    }
-    */
-
-  /*  for(int i=0;i<keystones.length;i++){
-      if(keystones[i].pressed() && mouseJustPressedDown){
-
-        peopleLines[0].create(newMouseX,newMouseY-yOffset);
-        println("YES " + currentLoadedImagesID[i]+ "newMouseX"+ newMouseX + "newMouseY"+ (newMouseY-yOffset));
-        mouseJustPressedDown = false;
-      }
-    }
-    for(int j=0;j<peopleLines.length;j++){
-      peopleLines[j].show();
-    }*/
-    for (int i=0;i<numOfImageToLoad;i++){
+// offsetScale = map(mouseY,0,height,0,1);
+    for (int i=numOfImageToLoad-1;i>=0;i--){
 
       imagesToDisplayX[i] = width/2;
 
       if(i<numOfImageToLoad/2-1){
-        imagesToDisplayY[i] = height/2- imagesToDisaply[i].height()*abs(numOfImageToLoad/2-1 - i) ;
+        imagesToDisplayY[i] = height/2- imagesToDisaply[i].height()*abs(numOfImageToLoad/2-1 - i) *offsetScale;
       }else if (i>numOfImageToLoad/2-1){
-        imagesToDisplayY[i] = height/2+ imagesToDisaply[i].height()*abs(numOfImageToLoad/2-1 - i) ;
+        imagesToDisplayY[i] = height/2+ imagesToDisaply[i].height()*abs(numOfImageToLoad/2-1 - i) *offsetScale;
       }else{
         imagesToDisplayY[i] = height/2;
       }
-            newMouseX = mouseX;
+      newMouseX = mouseX;
       newMouseY = mouseY - imageDisplayY;
-         if(imageScale<1){
+      if(imageScale<1){
         newMouseX = (mouseX - newTranslateX)/imageScale;
         newMouseY = (mouseY - imageDisplayY - newTranslateY)/imageScale;
       }
       println("imagesToDisplayY["+i+"]" + imagesToDisplayY[i]);
-      imagesToDisaply[i].show(imagesToDisplayX[i],imagesToDisplayY[i],newMouseX,newMouseY);
+      imagesToDisaply[i].show(imagesToDisplayX[i],imagesToDisplayY[i],newMouseX,newMouseY,(height-imagesToDisaply[i].height())/2);
 
       int sideW = imagesToDisaply[i].width()/2;
       int sideH = imagesToDisaply[i].height()/2;
@@ -323,33 +239,47 @@ for (int i=numOfImageToLoad-1; i>= 0; i--) {
       int rightBottomBottomMargin = 5;
 
       imagesToDisaply[i].createKeystone(-sideW + leftTopMargin, imagesToDisaply[i].height()/4, sideW - rightTopMargin,imagesToDisaply[i].height()/4, sideW - rightBottomMargin,imagesToDisaply[i].height()/2 - rightBottomBottomMargin, -sideW + leftBottomMargin, imagesToDisaply[i].height()/2 - leftBottomBottomMargin);
-        
-     //println("YES " + currentLoadedImagesID[i]);
 
-      if(imagesToDisaply[i].isOverKeystone() && mouseHasReleased){
-
-              peopleLines[peopleLines.length -1].create(newMouseX,newMouseY);
-              peopleHeads[peopleHeads.length -1].addPoint(newMouseX,newMouseY);
-      }
-
-
-    for(int j=0;j<peopleLines.length;j++){
-      peopleLines[j].show(newMouseX,newMouseY);
-      if(peopleLines[peopleLines.length -1].isFinished()){
-             println("NEW PEOPLE LINE " );
-          peopleLines.push(new PeopleLine());
-      }
-    }
- for(int j=0;j<peopleHeads.length;j++){
-     peopleHeads[j].show();
-
-    }
-    
-    
+      int zoomSize =60;
+      int zoomScale =2; 
+if(imageScale ==1 ){ //TODO only works for no scale now
+      gg = imagesToDisaply[i].getMagnified(round(newMouseX-(width-imagesToDisaply[i].width())/2),round(mouseY- (height-imagesToDisaply[i].height())/2));
+     // println("imagesToDisaply "+ i+ " " + imagesToDisplayY[i]);
+      gg.resize(zoomSize*zoomScale,zoomSize*zoomScale);
+      image(gg,newMouseX +zoomSize*zoomScale/2,newMouseY -zoomSize*zoomScale/2);
+    //  println("newMouseY " + newMouseY + " mouseY " + mouseY);
 }
+      if(sessionMakeLines){
+        offsetScale = 0.3;
+       isTxtfieldshown = false;
+       if(imagesToDisaply[i].isOverKeystone() && mouseHasReleased){
+        peopleLines[peopleLines.length -1].create(newMouseX,newMouseY);
+      }
+      for(int j=0;j<peopleLines.length;j++){
+        peopleLines[j].show(newMouseX,newMouseY);
+        if(peopleLines[peopleLines.length -1].isFinished()){
+         println("NEW PEOPLE LINE " );
+         peopleLines.push(new PeopleLine());
+       }
+     }
+   }
+   if(sessionCountHead){
+      offsetScale = 1;
+     isTxtfieldshown = true;
+     if(imagesToDisaply[i].isOverKeystone() && mouseHasReleased){
 
-    mouseHasReleased = false;
-    popMatrix();
+      peopleHeads[peopleHeads.length -1].addPoint(newMouseX,newMouseY);
+    }
+
+    for(int j=0;j<peopleHeads.length;j++){
+     peopleHeads[j].show();
+     peopleHeads[j].numOfHeads();
+
+   }
+ }
+}
+mouseHasReleased = false;
+popMatrix();
 
   //------image scaler-------
   hs1.update();
@@ -466,18 +396,6 @@ void timeLine(){
 }
 
 void mousePressed() {
-  /*
-    for(int i=0;i <keystones.length;i++){
-      if(keystones[i].pressed()){
-        mouseJustPressedDown = false;
-        println("YES " + currentLoadedImagesID[i]);
-      }
-    }*/      
-
-
-    for (int i=0; i< array.length; i++) {
-   // println("Image  " + i + ": " +array[i]);
- }
 
 }
 
@@ -490,7 +408,7 @@ void mouseDragged() {
 void mouseReleased() {
 
 
-mouseHasReleased = true;
+  mouseHasReleased = true;
 
   for(int i=0;i<timelineBtn.length;i++){
     if(timelineBtn[i].pressed() != -1){
@@ -501,13 +419,17 @@ mouseHasReleased = true;
   for(int i =0; i<toolBarBtns.length;i++){
    if(toolBarBtns[i].pressed() == toolBarBtnsTxt[0]){
      println("Count People");
-     isTxtfieldshown = false;
 
+     
+     sessionCountHead = true;
+     sessionMakeLines = false;
 
    }else if(toolBarBtns[i].pressed() ==  toolBarBtnsTxt[1]){
     println("Count Head");
-    isTxtfieldshown =true;
 
+
+    sessionCountHead = false;
+    sessionMakeLines = true;
   }
 }
 for(int i =0; i<imgToolBarBtn.length;i++){
@@ -519,14 +441,6 @@ for(int i =0; i<imgToolBarBtn.length;i++){
   prevImage = true;
 }
 }
-/*
-  for(int i=0;i <keystones.length;i++){
-    if(keystones[i].pressed()){
-
-     
-    }
-  }*/
-
 
 }
 
@@ -548,32 +462,6 @@ void updateImage(int targetImageID){
 
 }
 
-/*
-void setGradient(int x, int y, float w, float h, color c1, color c2, int axis ) {
-
-  noFill();
-
-  if (axis == 1) {  // Top to bottom gradient
-    for (int i = y; i <= y+h; i++) {
-      float inter = map(i, y, y+h, 0, 1);
-      color c = lerpColor(c1, c2, inter);
-      stroke(c);
-      line(x, i, x+w, i);
-    }
-  }  
-  else if (axis == 0) {  // Left to right gradient
-    for (int i = x; i <= x+w; i++) {
-      float inter = map(i, x, x+w, 0, 1);
-      color c = lerpColor(c1, c2, inter);
-      stroke(c);
-      line(i, y, i, y+h);
-    }
-  }
-}
-*/
-
-
-
 // +++++++++++++++++ Classes +++++++++++++++++
 
 class ImageDisplay
@@ -584,6 +472,7 @@ class ImageDisplay
   float cHeight =10 ;
   int cImageURL;
   PImage cImage;
+  PImage cImageMagnified;
   boolean firstLoad = true;
 
   int ksX1;
@@ -629,7 +518,7 @@ class ImageDisplay
       popMatrix();
     }
   }
-  void show(int x,int y,int mx, int my)
+  void show(int x,int y,int mx, int my,int ceiling)
   {
 
 
@@ -659,31 +548,31 @@ class ImageDisplay
       cWidth = cImage.width;
       cHeight = cImage.height;
 
+      if(drawKeystone){
+        if(overHightlight){
+          strokeWeight(3);
+          stroke(255,0,0);
+          fill(255,0);
+        }else{
+          strokeWeight(3);
+          stroke(255);
+          fill(255,0);
+        }
+        beginShape();
+        vertex(ksX1,ksY1);
+        vertex(ksX2,ksY2);
+        vertex(ksX3,ksY3);
+        vertex(ksX4,ksY4);
+        vertex(ksX1,ksY1);
+        endShape();
 
-    if(drawKeystone){
-      if(overHightlight){
-        strokeWeight(3);
-        stroke(255,0,0);
-        fill(255,0);
-      }else{
-        strokeWeight(3);
-        stroke(255);
-        fill(255,0);
+        overKeystone(mx -cX,my - cY);
+
       }
-      beginShape();
-      vertex(ksX1,ksY1);
-      vertex(ksX2,ksY2);
-      vertex(ksX3,ksY3);
-      vertex(ksX4,ksY4);
-      vertex(ksX1,ksY1);
-      endShape();
-
-      overKeystone(mx -cX,my - cY);
-
-    }
       popMatrix();
     }   
-
+    //cImageMagnified = cImage.get(round(mx-(x-(cWidth/2))-15),round(my-15-ceiling) ,30, 30);
+    //println("y " + y + " my "+ my);
   }
   void moveTo(int x, int y){
 
@@ -722,44 +611,49 @@ class ImageDisplay
   if(overHightlight){
     return true;
   }
-    return false;
-  }
-  boolean isOverKeystone(){
-    if(overHightlight){
-      return true;
-    }
-    return false;
-  }
-  boolean overKeystone(int x, int y){
-
-   PVector pt = new PVector(x,y);
-   PVector v1 = new PVector(ksX1,ksY1);
-   PVector v2 = new PVector(ksX2,ksY2);
-   PVector v3 = new PVector(ksX3,ksY3);
-   PVector v4 = new PVector(ksX4,ksY4);
-
-   if (PointInTriangle(pt,v1,v2,v3) || PointInTriangle(pt,v3,v4,v1)){
-    overHightlight =true;
+  return false;
+}
+boolean isOverKeystone(){
+  if(overHightlight){
     return true;
-  }else {overHightlight =false;}
-  return  false;
   }
+  return false;
+}
+boolean overKeystone(int x, int y){
 
-  float sign(var p1, var p2, var p3)
-  {
-    return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
-  }
+ PVector pt = new PVector(x,y);
+ PVector v1 = new PVector(ksX1,ksY1);
+ PVector v2 = new PVector(ksX2,ksY2);
+ PVector v3 = new PVector(ksX3,ksY3);
+ PVector v4 = new PVector(ksX4,ksY4);
 
-  boolean PointInTriangle(var pt, var v1, var v2, var v3)
-  {
-    boolean b1, b2, b3;
+ if (PointInTriangle(pt,v1,v2,v3) || PointInTriangle(pt,v3,v4,v1)){
+  overHightlight =true;
+  return true;
+}else {overHightlight =false;}
+return  false;
+}
 
-    b1 = sign(pt, v1, v2) < 0.0f;
-    b2 = sign(pt, v2, v3) < 0.0f;
-    b3 = sign(pt, v3, v1) < 0.0f;
+float sign(var p1, var p2, var p3)
+{
+  return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
+}
 
-    return ((b1 == b2) && (b2 == b3));
-  }
+boolean PointInTriangle(var pt, var v1, var v2, var v3)
+{
+  boolean b1, b2, b3;
+
+  b1 = sign(pt, v1, v2) < 0.0f;
+  b2 = sign(pt, v2, v3) < 0.0f;
+  b3 = sign(pt, v3, v1) < 0.0f;
+
+  return ((b1 == b2) && (b2 == b3));
+}
+
+PImage getMagnified(int mx,int my){
+  cImageMagnified = cImage.get(mx-15,my-15,30,30);
+ return cImageMagnified;
+}
 
 
 }
@@ -809,7 +703,7 @@ class ToolBarButton
 
     pushMatrix();
     rectMode(CORNER);
-        textAlign(LEFT);
+    textAlign(LEFT);
     noStroke();
     if(over()){
       fill( 255 );
@@ -907,7 +801,7 @@ class PeopleLine
   int okBtnW;
   int okBtnH;
 
-    int dragPointOver = false;
+  int dragPointOver = false;
   boolean lineFinished = false;
 
   PeopleLine()
@@ -947,9 +841,9 @@ class PeopleLine
   void show(int mx, int my)
   {
     if( cX1 != -1 && cY1 != -1 && cX2 != -1 && cY2 != -1){ //two points are created
-    if(!lineFinished){
-      showOKBtn(mx,my);
-    }
+      if(!lineFinished){
+        showOKBtn(mx,my);
+      }
     }      
     if(over(mx,my)){
       strokeWeight(10);
@@ -963,77 +857,77 @@ class PeopleLine
 
     strokeCap(ROUND);
     if(cX1 != -1 && cY1 != -1 && cX2 != -1 && cY2 != -1){
-    
-                line(cX1,cY1,cX2,cY2);
-      }else{
+
+      line(cX1,cY1,cX2,cY2);
+    }else{
     //lines not created yet, no display
-      } 
-      noStroke();
-      fill(255,100);
-      ellipse(cX1,cY1,10,10);
-      fill(255,100);
-      ellipse(cX2,cY2,10,10);
-    }
+  } 
+  noStroke();
+  fill(255,100);
+  ellipse(cX1,cY1,10,10);
+  fill(255,100);
+  ellipse(cX2,cY2,10,10);
+}
 
-    boolean drag(int mx,int my){
-      if(dragPointOver && keyPressed){
+boolean drag(int mx,int my){
+  if(dragPointOver && keyPressed){
 
-        return true;
-      }
-      return false;
-    }
-
-    boolean over(int mx,int my){
-
-     if(dist(mx,my,cX1,cY1) < 15 || dist(mx,my,cX2,cY2) < 15){
-      dragPointOver = true;
-      return true;
-    }
-    dragPointOver = false;
-    return false;
+    return true;
   }
+  return false;
+}
 
-  void showOKBtn(int mx,int my){
-    okBtnX = (cX1+cX2)/2 + 50
-    okBtnY = (cY1+cY2)/2;
-    okBtnW = 50;
-    okBtnH = 30;
-    textAlign(CENTER, CENTER);
-    rectMode(CENTER);
-    if(overOKBtn(mx,my)){
-      if(mousePressed){
-        lineFinished = true;
-      }
-      stroke(255);
-      strokeWeight(2);
-      fill(200,160);
-   }
-   else{
+boolean over(int mx,int my){
+
+ if(dist(mx,my,cX1,cY1) < 15 || dist(mx,my,cX2,cY2) < 15){
+  dragPointOver = true;
+  return true;
+}
+dragPointOver = false;
+return false;
+}
+
+void showOKBtn(int mx,int my){
+  okBtnX = (cX1+cX2)/2 + 50
+  okBtnY = (cY1+cY2)/2;
+  okBtnW = 50;
+  okBtnH = 30;
+  textAlign(CENTER, CENTER);
+  rectMode(CENTER);
+  if(overOKBtn(mx,my)){
+    if(mousePressed){
+      lineFinished = true;
+    }
+    stroke(255);
+    strokeWeight(2);
+    fill(200,160);
+  }
+  else{
     stroke(255);
     strokeWeight(2);
     fill(100,160);
-    }
-    rect(okBtnX,okBtnY,okBtnW,okBtnH);
-    fill(255);
-    text("確定",okBtnX + 10,okBtnY);
+  }
+  rect(okBtnX,okBtnY,okBtnW,okBtnH);
+  fill(255);
+  text("確定",okBtnX + 10,okBtnY);
 
+}
+
+boolean overOKBtn(int newX,int newY){
+
+  if(abs(newX- okBtnX)< okBtnW/2 && abs(newY- okBtnY)< okBtnH/2 ){
+
+    return true;
   }
 
-   boolean overOKBtn(int newX,int newY){
-
-    if(abs(newX- okBtnX)< okBtnW/2 && abs(newY- okBtnY)< okBtnH/2 ){
-
-      return true;
-    }
-
-    return false;
-   }
-   boolean isFinished(){
-    if(lineFinished){
-      return true;
-    }
-    return false;
-   }
+  return false;
+}
+boolean isFinished(){
+  if(lineFinished){
+    return true;
+  }
+  return false;
+}
 }
 
 class PeopleHead
@@ -1054,7 +948,7 @@ class PeopleHead
 
     fill(255,100);
     for(int i=0;i<cX.length;i++){
-    ellipse(cX[i],cY[i],10,10);
+      ellipse(cX[i],cY[i],10,10);
     }
   }
   void addPoint(int mx,int my){
@@ -1219,7 +1113,7 @@ class HScrollbar {
 }
 
 void display() {
-    rectMode(CORNER);
+  rectMode(CORNER);
   noStroke();
   fill(204);
   rect(xpos, ypos, swidth, sheight);
@@ -1271,33 +1165,7 @@ array.push(images);
 });  //ajax
 
   imgURL= array;
-/*
- var itemsOnPage = 5;
 
- 
-  $("#next").click(function() {
-  
-  console.log(' endID:'+endID);
-
-  loadItems(endID);
-  endID -=itemsOnPage;
-  });
-  $("#prev").click(function() {
-  loadItems(beginID,endID);
-  });
-
-function loadItems(end){
-  //$('.center2').html(''); 
-  for(var i=end; i > end - itemsOnPage; i--){
-
-    if(i>=0){
-          //  console.log(' i:'+i);
-      $('<span></span>').html("<img src='"+''+array[i]+"''>" ).appendTo('.center2')
-
-    }
-  }
-}
-*/
 
 }
 
