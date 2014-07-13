@@ -242,7 +242,7 @@ translate(0,imageDisplayY);
 
       int zoomSize =60;
       int zoomScale =2; 
-if(imageScale ==1 ){ //TODO only works for no scale now
+if(imageScale >1 ){ //TODO only works for no scale now
       gg = imagesToDisaply[i].getMagnified(round(newMouseX-(width-imagesToDisaply[i].width())/2),round(mouseY- (height-imagesToDisaply[i].height())/2));
      // println("imagesToDisaply "+ i+ " " + imagesToDisplayY[i]);
       gg.resize(zoomSize*zoomScale,zoomSize*zoomScale);
